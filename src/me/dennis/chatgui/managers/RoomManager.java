@@ -7,7 +7,7 @@ import me.dennis.chatgui.types.Room;
 
 public class RoomManager {
 
-	static Room room = RoomEnum.MAIN.room;
+	public static Room room = RoomEnum.MAIN.room;
 	
 	public static void setRoom(RoomEnum room) {
 		RoomManager.room = room.room;

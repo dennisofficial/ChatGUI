@@ -25,7 +25,14 @@ public class Display extends JPanel implements ActionListener {
 		addKeyListener(new Keyboard());
 		addMouseListener(new Mouse());
 		
-		RoomManager.init();
+		Keyboard.setupKeys();
+		Mouse.setupKeys();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				RoomManager.init();
+			}
+		}).start();
 		
 		new Timer(1, this).start();
 	}
@@ -35,6 +42,9 @@ public class Display extends JPanel implements ActionListener {
 		HEIGHT = getHeight();
 		WIDTH = getWidth();
 		RoomManager.update();
+		
+		Keyboard.reset();
+		Mouse.reset();
 	}
 	
 	@Override
