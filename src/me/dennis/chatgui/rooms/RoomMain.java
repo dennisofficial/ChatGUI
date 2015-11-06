@@ -11,8 +11,10 @@ import java.io.File;
 import java.io.IOException;
 
 import me.dennis.chatgui.core.Display;
+import me.dennis.chatgui.enums.RoomEnum;
 import me.dennis.chatgui.listeners.Keyboard;
 import me.dennis.chatgui.managers.NetworkManager;
+import me.dennis.chatgui.managers.RoomManager;
 import me.dennis.chatgui.protocols.MessageProtocol;
 import me.dennis.chatgui.types.Room;
 
@@ -23,6 +25,7 @@ public class RoomMain extends Room {
 
 	private boolean deniedToNickname = false;
 	private boolean verifiedToDenied = false;
+	private boolean verifiedToAccept = false;
 	
 	@Override
 	public void init() {
@@ -74,16 +77,21 @@ public class RoomMain extends Room {
 				}
 			}
 		}
-		if (state.equals(State.VERIFYING)) {
+		else if (state.equals(State.VERIFYING)) {
 			if (MessageProtocol.recievedData()) {
-				if (MessageProtocol.getMessage().equals("deny")) {
+				if (MessageProtocol.getMessage().equals("username")) {
 					verifyingToDenied();
 				}
-				// TODO GO TO NEXT ROOM
+				else if (MessageProtocol.getMessage().equals("accept")) {
+					verifyingToAccept();
+				}
 			}
 		}
-		if (state.equals(State.DENIED)) {
+		else if (state.equals(State.DENIED)) {
 			deniedToNickname();
+		}
+		else if (state.equals(State.ACCEPT)) {
+			RoomManager.setRoom(RoomEnum.CHAT);
 		}
 	}
 	
@@ -125,6 +133,26 @@ public class RoomMain extends Room {
 			}
 		}).start();
 	}
+	
+	public void verifyingToAccept() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (!verifiedToAccept) {
+						verifiedToAccept = true;
+						((RoomChat) RoomEnum.CHAT.room).nickname = nickname;
+						Thread.sleep(500);
+						state = State.ACCEPT;
+						verifiedToAccept = false;
+					}
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
 
 	@Override
 	public void draw(Graphics2D g) {
@@ -146,6 +174,7 @@ public class RoomMain extends Room {
 		font = font.deriveFont(50F);
 		g.setFont(font);
 		FontMetrics fm = g.getFontMetrics(font);
+		
 		g.setColor(new Color(0xFFFFFF));
 		if (state.equals(State.CONNECTING)) {
 			g.drawString("Connecting...", (Display.WIDTH - fm.stringWidth("Connecting...")) / 2, Display.HEIGHT / 2);
@@ -170,7 +199,7 @@ public class RoomMain extends Room {
 	}
 
 	enum State {
-		CONNECTING, NICKNAME, ERROR, VERIFYING, DENIED;
+		CONNECTING, NICKNAME, ERROR, VERIFYING, DENIED, ACCEPT;
 	}
 
 }
