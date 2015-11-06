@@ -9,7 +9,7 @@ public abstract class Protocol {
 	public static void parsePacket(String msg) {
 		for (Enum p : Enum.values()) {
 			try {
-				String[] vals = msg.split("\t"); // Check if this would work
+				String[] vals = msg.split("\t", 2);
 				String protocol = vals[0];
 				String data = vals[1];
 				if (protocol.equals(p.label)) {
@@ -30,8 +30,6 @@ public abstract class Protocol {
 			this.label = label;
 			this.protocol = protocol;
 		}
-		
-		
 		
 	}
 	

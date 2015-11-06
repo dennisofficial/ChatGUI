@@ -1,6 +1,7 @@
 package me.dennis.chatgui.managers;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import me.dennis.chatgui.enums.RoomEnum;
 import me.dennis.chatgui.types.Room;
@@ -22,7 +23,7 @@ public class RoomManager {
 	}
 	
 	public static void draw(Graphics g) {
-		room.draw(g);
+		room.draw((Graphics2D) g);
 	}
 	
 }

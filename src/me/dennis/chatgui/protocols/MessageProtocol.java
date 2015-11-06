@@ -10,10 +10,10 @@ public class MessageProtocol extends Protocol {
 	
 	@Override
 	public void runData(String data) {
-		String[] vals = data.split("\n");
+		String[] vals = data.split("\t");
 		from = vals[0];
-		to = vals[0];
-		message = vals[0];
+		to = vals[1];
+		message = vals[2];
 	}
 	
 	public static boolean recievedData() {
@@ -31,6 +31,12 @@ public class MessageProtocol extends Protocol {
 	}
 	public static String getMessage() {
 		return message;
+	}
+
+	public static void reset() {
+		from = null;
+		to = null;
+		message = null;
 	}
 	
 }

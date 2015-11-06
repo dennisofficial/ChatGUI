@@ -1,12 +1,13 @@
 package me.dennis.chatgui.managers;
 
-import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class NetworkManager implements Runnable {
 
@@ -17,8 +18,8 @@ public class NetworkManager implements Runnable {
 	public static boolean connect() {
 		try {
 			connection = new Socket(InetAddress.getLocalHost(), 8231);
-			input = new DataInputStream(connection.getInputStream());
-			output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+			input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
+			output = new DataOutputStream(connection.getOutputStream());
 			new Thread(new NetworkManager()).start();
 			return true;
 		} catch (ConnectException ex) {
@@ -29,7 +30,7 @@ public class NetworkManager implements Runnable {
 		return false;
 	}
 	
-	public void sendMessage(String msg) {
+	public static void sendMessage(String msg) {
 		try {
 			output.writeUTF(msg);
 		} catch (IOException e) {
@@ -42,6 +43,8 @@ public class NetworkManager implements Runnable {
 		while (true) {
 			try {
 				Protocol.parsePacket(NetworkManager.input.readUTF());
+			} catch (SocketException e) {
+				System.err.println("Server Disconnected!");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
