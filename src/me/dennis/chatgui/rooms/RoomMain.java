@@ -26,7 +26,6 @@ public class RoomMain extends Room {
 	
 	@Override
 	public void init() {
-		System.out.println("Connecting to server...");
 		try {
 			Thread.sleep(1000);
 		}
@@ -34,11 +33,9 @@ public class RoomMain extends Room {
 			e.printStackTrace();
 		}
 		if (NetworkManager.connect()) {
-			System.out.println("Connected to server!");
 			state = State.NICKNAME;
 		}
 		else {
-			System.out.println("Could not connect to server...");
 			state = State.ERROR;
 		}
 	}
