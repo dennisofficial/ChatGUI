@@ -78,12 +78,14 @@ public class RoomMain extends Room {
 			}
 		}
 		else if (state.equals(State.VERIFYING)) {
-			if (MessageProtocol.recievedData()) {
-				if (MessageProtocol.getMessage().equals("username")) {
-					verifyingToDenied();
-				}
-				else if (MessageProtocol.getMessage().equals("accept")) {
-					verifyingToAccept();
+			if (!verifiedToAccept && !verifiedToDenied) {
+				if (MessageProtocol.recievedData()) {
+					if (MessageProtocol.getMessage().equals("username")) {
+						verifyingToDenied();
+					}
+					else if (MessageProtocol.getMessage().equals("accept")) {
+						verifyingToAccept();
+					}
 				}
 			}
 		}
@@ -92,6 +94,7 @@ public class RoomMain extends Room {
 		}
 		else if (state.equals(State.ACCEPT)) {
 			RoomManager.setRoom(RoomEnum.CHAT);
+			NetworkManager.sendMessage("joined");
 		}
 	}
 	
