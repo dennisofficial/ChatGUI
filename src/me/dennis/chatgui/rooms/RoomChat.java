@@ -91,7 +91,7 @@ public class RoomChat extends Room {
 				output = output.substring(0, output.length() - 1);
 			}
 		}
-		if (Keyboard.isPressed(VK_ENTER)) {
+		else if (Keyboard.isPressed(VK_ENTER)) {
 			if (output.length() > 0) {
 				NetworkManager.sendMessage(output);
 				output = "";
@@ -132,7 +132,7 @@ public class RoomChat extends Room {
 
 		g.setColor(new Color(0xFFFFFF));
 		for (int i = 0; i < log.size(); i++) {
-			g.drawString(log.get(i), 10, Display.HEIGHT - font.getSize() - (font.getSize() * i));
+			g.drawString(log.get(i), 10, Display.HEIGHT - (font.getSize() * (log.size() - i)));
 		}
 		g.drawString(nickname + ": " + output + "_", 10, Display.HEIGHT);
 	}
