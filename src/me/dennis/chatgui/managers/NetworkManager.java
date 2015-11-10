@@ -15,9 +15,9 @@ public class NetworkManager implements Runnable {
 	public static DataInputStream input;
 	public static DataOutputStream output;
 	
-	public static boolean connect() {
+	public static boolean connect(InetAddress ip) {
 		try {
-			connection = new Socket(InetAddress.getLocalHost(), 8231);
+			connection = new Socket(ip, 8231);
 			input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
 			output = new DataOutputStream(connection.getOutputStream());
 			new Thread(new NetworkManager()).start();

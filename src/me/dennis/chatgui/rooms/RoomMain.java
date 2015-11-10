@@ -6,9 +6,11 @@ import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
+import static java.awt.event.KeyEvent.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import me.dennis.chatgui.core.Display;
 import me.dennis.chatgui.enums.RoomEnum;
@@ -21,24 +23,29 @@ import me.dennis.chatgui.types.Room;
 public class RoomMain extends Room {
 
 	public String nickname = "";
+	public String ip = "";
 	public State state = State.CONNECTING;
 
 	private boolean deniedToNickname = false;
 	private boolean verifiedToDenied = false;
 	private boolean verifiedToAccept = false;
-	
+	private boolean errorToIP = false;
+
 	@Override
 	public void init() {
 		try {
 			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if (NetworkManager.connect()) {
-			state = State.NICKNAME;
-		}
-		else {
+		try {
+			boolean b = NetworkManager.connect(InetAddress.getLocalHost());
+			if (b) {
+				state = State.NICKNAME;
+			} else {
+				state = State.ERROR;
+			}
+		} catch (UnknownHostException e) {
 			state = State.ERROR;
 		}
 	}
@@ -47,43 +54,73 @@ public class RoomMain extends Room {
 	public void update() {
 		if (state.equals(State.NICKNAME)) {
 			if (nickname.length() <= 20) {
-				if (Keyboard.isDirect(KeyEvent.VK_SHIFT)) {
+				if (Keyboard.isDirect(VK_SHIFT)) {
 					for (char c = 'A'; c <= 'Z'; c++) {
-						if (Keyboard.isPressed(KeyEvent.getExtendedKeyCodeForChar(c))) {
+						if (Keyboard.isPressed(getExtendedKeyCodeForChar(c))) {
 							nickname += new Character(c).toString();
 						}
 					}
-				}
-				else {
+				} else {
 					for (char c = 'a'; c <= 'z'; c++) {
-						if (Keyboard.isPressed(KeyEvent.getExtendedKeyCodeForChar(c))) {
+						if (Keyboard.isPressed(getExtendedKeyCodeForChar(c))) {
 							nickname += new Character(c).toString();
 						}
 					}
 				}
 				for (char c = '0'; c <= '9'; c++) {
-					if (Keyboard.isPressed(KeyEvent.getExtendedKeyCodeForChar(c))) {
+					if (Keyboard.isPressed(getExtendedKeyCodeForChar(c))) {
 						nickname += new Character(c).toString();
 					}
 				}
 			}
 			if (nickname.length() > 0) {
-				if (Keyboard.isPressed(KeyEvent.VK_BACK_SPACE)) {
+				if (Keyboard.isPressed(VK_BACK_SPACE)) {
 					nickname = nickname.substring(0, nickname.length() - 1);
 				}
-				if (Keyboard.isPressed(KeyEvent.VK_ENTER)) {
+				if (Keyboard.isPressed(VK_ENTER)) {
 					NetworkManager.sendMessage(nickname);
 					state = State.VERIFYING;
 				}
 			}
+		}
+		else if (state.equals(State.IP)) {
+			for (char c = '0'; c <= '9'; c++) {
+				if (Keyboard.isPressed(getExtendedKeyCodeForChar(c))) {
+					ip += new Character(c).toString();
+				}
+			}
+			if (Keyboard.isPressed(VK_PERIOD) && !Keyboard.isDirect(VK_SHIFT)) {
+				ip += '.';
+			}
+			if (ip.length() > 0) {
+				if (Keyboard.isPressed(VK_BACK_SPACE)) {
+					ip = nickname.substring(0, nickname.length() - 1);
+				}
+			}
+			if (Keyboard.isPressed(VK_ENTER)) {
+				state = State.CONNECTING;
+				try {
+					if (NetworkManager.connect(InetAddress.getByName(ip))) {
+						state = State.NICKNAME;
+					}
+					else {
+						state = State.ERROR;
+					}
+				} catch (UnknownHostException e) {
+					state = State.ERROR;
+				}
+				ip = "";
+			}
+		}
+		else if (state.equals(State.ERROR)) {
+			errorToIP();
 		}
 		else if (state.equals(State.VERIFYING)) {
 			if (!verifiedToAccept && !verifiedToDenied) {
 				if (MessageProtocol.recievedData()) {
 					if (MessageProtocol.getMessage().equals("username")) {
 						verifyingToDenied();
-					}
-					else if (MessageProtocol.getMessage().equals("accept")) {
+					} else if (MessageProtocol.getMessage().equals("accept")) {
 						verifyingToAccept();
 					}
 				}
@@ -97,64 +134,59 @@ public class RoomMain extends Room {
 			NetworkManager.sendMessage("joined");
 		}
 	}
-	
+
 	public void deniedToNickname() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (!deniedToNickname) {
-						deniedToNickname = true;
-						Thread.sleep(2500);
-						state = State.NICKNAME;
-						nickname = "";
-						deniedToNickname = false;
-					}
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		try {
+			if (!deniedToNickname) {
+				deniedToNickname = true;
+				Thread.sleep(2500);
+				state = State.NICKNAME;
+				nickname = "";
+				deniedToNickname = false;
 			}
-		}).start();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void verifyingToDenied() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (!verifiedToDenied) {
-						verifiedToDenied = true;
-						Thread.sleep(500);
-						state = State.DENIED;
-						verifiedToDenied = false;
-					}
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		try {
+			if (!verifiedToDenied) {
+				verifiedToDenied = true;
+				Thread.sleep(500);
+				state = State.DENIED;
+				verifiedToDenied = false;
 			}
-		}).start();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void verifyingToAccept() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (!verifiedToAccept) {
-						verifiedToAccept = true;
-						((RoomChat) RoomEnum.CHAT.room).nickname = nickname;
-						Thread.sleep(500);
-						state = State.ACCEPT;
-						verifiedToAccept = false;
-					}
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		try {
+			if (!verifiedToAccept) {
+				verifiedToAccept = true;
+				((RoomChat) RoomEnum.CHAT.room).nickname = nickname;
+				Thread.sleep(500);
+				state = State.ACCEPT;
+				verifiedToAccept = false;
 			}
-		}).start();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void errorToIP() {
+		try {
+			if (!errorToIP) {
+				errorToIP = true;
+				Thread.sleep(2000);
+				state = State.IP;
+				errorToIP = false;
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -167,42 +199,46 @@ public class RoomMain extends Room {
 		Font font = null;
 		try {
 			font = Font.createFont(Font.PLAIN, new File("fonts/main.ttf"));
-		}
-		catch (FontFormatException e) {
+		} catch (FontFormatException e) {
 			e.printStackTrace();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		font = font.deriveFont(50F);
 		g.setFont(font);
 		FontMetrics fm = g.getFontMetrics(font);
-		
+
 		g.setColor(new Color(0xFFFFFF));
 		if (state.equals(State.CONNECTING)) {
 			g.drawString("Connecting...", (Display.WIDTH - fm.stringWidth("Connecting...")) / 2, Display.HEIGHT / 2);
 		}
-		if (state.equals(State.ERROR)) {
-			g.drawString("Error: Cannot connect!", (Display.WIDTH - fm.stringWidth("Error: Cannot connect!")) / 2,
-					Display.HEIGHT / 2);
+		else if (state.equals(State.IP)) {
+			g.drawString("Enter IP:", (Display.WIDTH - fm.stringWidth("Enter IP:")) / 2, Display.HEIGHT / 2 - font.getSize() / 2);
+			font = font.deriveFont(30F);
+			fm = g.getFontMetrics(font);
+			g.setFont(font);
+			g.drawString(ip, (Display.WIDTH - fm.stringWidth(ip)) / 2, Display.HEIGHT / 2);
 		}
-		if (state.equals(State.NICKNAME)) {
+		else if (state.equals(State.ERROR)) {
+			g.drawString("Error: Cannot connect!", (Display.WIDTH - fm.stringWidth("Error: Cannot connect!")) / 2, Display.HEIGHT / 2);
+		}
+		else if (state.equals(State.NICKNAME)) {
 			g.drawString("Enter nickname:", (Display.WIDTH - fm.stringWidth("Enter nickname:")) / 2, Display.HEIGHT / 2 - font.getSize() / 2);
 			font = font.deriveFont(30F);
 			fm = g.getFontMetrics(font);
 			g.setFont(font);
 			g.drawString(nickname, (Display.WIDTH - fm.stringWidth(nickname)) / 2, Display.HEIGHT / 2);
 		}
-		if (state.equals(State.VERIFYING)) {
+		else if (state.equals(State.VERIFYING)) {
 			g.drawString("Verifying...", (Display.WIDTH - fm.stringWidth("Verifying...")) / 2, Display.HEIGHT / 2);
 		}
-		if (state.equals(State.DENIED)) {
+		else if (state.equals(State.DENIED)) {
 			g.drawString("Username taken!", (Display.WIDTH - fm.stringWidth("Username taken!")) / 2, Display.HEIGHT / 2);
 		}
 	}
 
 	enum State {
-		CONNECTING, NICKNAME, ERROR, VERIFYING, DENIED, ACCEPT;
+		CONNECTING, IP, NICKNAME, ERROR, VERIFYING, DENIED, ACCEPT;
 	}
 
 }
