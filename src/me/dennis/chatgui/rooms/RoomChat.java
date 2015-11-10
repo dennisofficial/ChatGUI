@@ -119,7 +119,7 @@ public class RoomChat extends Room {
 
 		Font font = null;
 		try {
-			font = Font.createFont(Font.PLAIN, new File("fonts/main.ttf"));
+			font = Font.createFont(Font.PLAIN, new File(this.getClass().getResource("/fonts/main.ttf").getPath()));
 		}
 		catch (FontFormatException e) {
 			e.printStackTrace();
