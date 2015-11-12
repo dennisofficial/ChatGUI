@@ -1,10 +1,37 @@
 package me.dennis.chatgui.rooms;
 
-import static java.awt.event.KeyEvent.*;
+import static java.awt.event.KeyEvent.KEY_LAST;
+import static java.awt.event.KeyEvent.VK_0;
+import static java.awt.event.KeyEvent.VK_1;
+import static java.awt.event.KeyEvent.VK_2;
+import static java.awt.event.KeyEvent.VK_3;
+import static java.awt.event.KeyEvent.VK_4;
+import static java.awt.event.KeyEvent.VK_5;
+import static java.awt.event.KeyEvent.VK_6;
+import static java.awt.event.KeyEvent.VK_7;
+import static java.awt.event.KeyEvent.VK_8;
+import static java.awt.event.KeyEvent.VK_9;
+import static java.awt.event.KeyEvent.VK_BACK_QUOTE;
+import static java.awt.event.KeyEvent.VK_BACK_SLASH;
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
+import static java.awt.event.KeyEvent.VK_CLOSE_BRACKET;
+import static java.awt.event.KeyEvent.VK_COMMA;
+import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.VK_EQUALS;
+import static java.awt.event.KeyEvent.VK_MINUS;
+import static java.awt.event.KeyEvent.VK_OPEN_BRACKET;
+import static java.awt.event.KeyEvent.VK_PERIOD;
+import static java.awt.event.KeyEvent.VK_QUOTE;
+import static java.awt.event.KeyEvent.VK_SEMICOLON;
+import static java.awt.event.KeyEvent.VK_SHIFT;
+import static java.awt.event.KeyEvent.VK_SLASH;
+import static java.awt.event.KeyEvent.VK_SPACE;
+import static java.awt.event.KeyEvent.getKeyText;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.File;
@@ -112,7 +139,7 @@ public class RoomChat extends Room {
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(new Color(0xBBBBBB));
+		g.setColor(new Color(0x707070));
 		g.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -130,12 +157,49 @@ public class RoomChat extends Room {
 		}
 		font = font.deriveFont(20F);
 		g.setFont(font);
+		FontMetrics fm = g.getFontMetrics(font);
 
+		// Input Bar
+		g.setColor(new Color(0x000000));
+		g.fillRect(0, Display.HEIGHT - 18, Display.WIDTH, 18);
 		g.setColor(new Color(0xFFFFFF));
-		for (int i = 0; i < log.size(); i++) {
-			g.drawString(log.get(i), 10, Display.HEIGHT - (font.getSize() * (log.size() - i)));
-		}
 		g.drawString(nickname + ": " + output + "_", 10, Display.HEIGHT);
+		
+		// Message Display
+		List<String> display = new ArrayList<String>();
+		for (int i = 0; i < log.size(); i++) {
+			String[] words = log.get(i).split(" ");
+			String line = "";
+			// DO INDENT
+			for (int j = 0; j < words.length; j++) {
+				String word = words[j];
+				if (fm.stringWidth(word) + 20 < Display.WIDTH) {
+					if (fm.stringWidth(line + word) + 20 < Display.WIDTH) {
+						line += word + " ";
+					}
+					else {
+						display.add(line.trim());
+						line = "";
+						j--;
+					}
+				}
+				else {
+					for (int h = 0; h < word.length(); h++) {
+						if (fm.stringWidth(line + word.charAt(h)) + 20 < Display.WIDTH) {
+							line += word.charAt(h);
+						}
+						else {
+							display.add(line.trim());
+							line = "";
+						}
+					}
+				}
+			}
+			display.add(line.trim());
+		}
+		for (int i = 0; i < display.size(); i++) {
+			g.drawString(display.get(i), 10, Display.HEIGHT - (font.getSize() * (display.size() - i)));
+		}
 	}
 
 }

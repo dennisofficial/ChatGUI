@@ -197,7 +197,7 @@ public class RoomMain extends Room {
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(new Color(0xBBBBBB));
+		g.setColor(new Color(0xB0B0B0));
 		g.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
