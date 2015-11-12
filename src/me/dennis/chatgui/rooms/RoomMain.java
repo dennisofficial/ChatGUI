@@ -84,12 +84,18 @@ public class RoomMain extends Room {
 			}
 		}
 		else if (state.equals(State.IP)) {
+			for (int i = VK_NUMPAD0; i <= VK_NUMPAD9; i++) {
+				if (Keyboard.isPressed(i)) {
+					String numpad = getModifiersExText(i);
+					ip += numpad.substring(numpad.length() - 1, numpad.length());
+				}
+			}
 			for (char c = '0'; c <= '9'; c++) {
 				if (Keyboard.isPressed(getExtendedKeyCodeForChar(c))) {
 					ip += new Character(c).toString();
 				}
 			}
-			if (Keyboard.isPressed(VK_PERIOD) && !Keyboard.isDirect(VK_SHIFT)) {
+			if (Keyboard.isPressed(VK_PERIOD) || Keyboard.isPressed(VK_DECIMAL) && !Keyboard.isDirect(VK_SHIFT)) {
 				ip += '.';
 			}
 			if (ip.length() > 0) {
