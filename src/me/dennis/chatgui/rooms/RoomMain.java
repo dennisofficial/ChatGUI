@@ -86,7 +86,7 @@ public class RoomMain extends Room {
 		else if (state.equals(State.IP)) {
 			for (int i = VK_NUMPAD0; i <= VK_NUMPAD9; i++) {
 				if (Keyboard.isPressed(i)) {
-					String numpad = getModifiersExText(i);
+					String numpad = getKeyText(i);
 					ip += numpad.substring(numpad.length() - 1, numpad.length());
 				}
 			}
@@ -100,7 +100,7 @@ public class RoomMain extends Room {
 			}
 			if (ip.length() > 0) {
 				if (Keyboard.isPressed(VK_BACK_SPACE)) {
-					ip = nickname.substring(0, nickname.length() - 1);
+					ip = ip.substring(0, ip.length() - 1);
 				}
 			}
 			if (Keyboard.isPressed(VK_ENTER)) {
