@@ -170,7 +170,8 @@ public class RoomChat extends Room {
 		for (int i = 0; i < log.size(); i++) {
 			String[] words = log.get(i).split(" ");
 			String line = "";
-			// DO INDENT
+			int lineNum = 1;
+			int lineWidth = fm.stringWidth(words[0] + " ");
 			for (int j = 0; j < words.length; j++) {
 				String word = words[j];
 				if (fm.stringWidth(word) + 20 < Display.WIDTH) {
@@ -178,7 +179,8 @@ public class RoomChat extends Room {
 						line += word + " ";
 					}
 					else {
-						display.add(line.trim());
+						addLine(display, line.trim(), lineNum, lineWidth);
+						lineNum++;
 						line = "";
 						j--;
 					}
@@ -189,16 +191,29 @@ public class RoomChat extends Room {
 							line += word.charAt(h);
 						}
 						else {
-							display.add(line.trim());
+							addLine(display, line, lineNum, lineWidth);
+							lineNum++;
 							line = "";
 						}
 					}
 				}
 			}
-			display.add(line.trim());
+			addLine(display, line, lineNum, lineWidth);
 		}
 		for (int i = 0; i < display.size(); i++) {
-			g.drawString(display.get(i), 10, Display.HEIGHT - (font.getSize() * (display.size() - i)));
+			String[] split = display.get(i).split(":", 2);
+			String line = split[1];
+			int indent = new Integer(split[0]);
+			g.drawString(line, 10 + indent, Display.HEIGHT - (font.getSize() * (display.size() - i)));
+		}
+	}
+
+	private void addLine(List<String> display, String line, int lineNum, int lineWidth) {
+		if (lineNum > 1) {
+			display.add(lineWidth + ":" + line);
+		}
+		else {
+			display.add("0:" + line);
 		}
 	}
 
