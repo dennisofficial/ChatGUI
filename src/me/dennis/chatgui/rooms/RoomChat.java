@@ -160,13 +160,41 @@ public class RoomChat extends Room {
 		FontMetrics fm = g.getFontMetrics(font);
 
 		// Input Bar
+		List<String> input = new ArrayList<String>();
+		input.add(nickname + ": " + output + "_");
+		List<String> output = wrapList(input, fm);
 		g.setColor(new Color(0x000000));
-		g.fillRect(0, Display.HEIGHT - 18, Display.WIDTH, 18);
+		g.fillRect(0, Display.HEIGHT - (font.getSize() * output.size()) + 2, Display.WIDTH, (font.getSize() * output.size()) - 2);
 		g.setColor(new Color(0xFFFFFF));
-		g.drawString(nickname + ": " + output + "_", 10, Display.HEIGHT);
+		int h;
+		for (h = 0; h < output.size(); h++) {
+			String[] split = output.get(h).split(":", 2);
+			String line = split[1];
+			int indent = new Integer(split[0]);
+			g.drawString(line, 10 + indent, Display.HEIGHT - (font.getSize() * (output.size() - h - 1)));
+		}
 		
 		// Message Display
-		List<String> display = new ArrayList<String>();
+		List<String> display = wrapList(log, fm);
+		for (int i = 0; i < display.size(); i++) {
+			String[] split = display.get(i).split(":", 2);
+			String line = split[1];
+			int indent = new Integer(split[0]);
+			g.drawString(line, 10 + indent, Display.HEIGHT - (font.getSize() * (display.size() - i + h - 1)));
+		}
+	}
+
+	private void addLine(List<String> display, String line, int lineNum, int lineWidth) {
+		if (lineNum > 1) {
+			display.add(lineWidth + ":" + line);
+		}
+		else {
+			display.add("0:" + line);
+		}
+	}
+	
+	private List<String> wrapList(List<String> log, FontMetrics fm) {
+		List<String> output = new ArrayList<String>();
 		for (int i = 0; i < log.size(); i++) {
 			String[] words = log.get(i).split(" ");
 			String line = "";
@@ -183,7 +211,7 @@ public class RoomChat extends Room {
 						line += word + " ";
 					}
 					else {
-						addLine(display, line.trim(), lineNum, lineWidth);
+						addLine(output, line.trim(), lineNum, lineWidth);
 						lineNum++;
 						line = "";
 						j--;
@@ -195,30 +223,16 @@ public class RoomChat extends Room {
 							line += word.charAt(h);
 						}
 						else {
-							addLine(display, line, lineNum, lineWidth);
+							addLine(output, line, lineNum, lineWidth);
 							lineNum++;
 							line = "";
 						}
 					}
 				}
 			}
-			addLine(display, line, lineNum, lineWidth);
+			addLine(output, line, lineNum, lineWidth);
 		}
-		for (int i = 0; i < display.size(); i++) {
-			String[] split = display.get(i).split(":", 2);
-			String line = split[1];
-			int indent = new Integer(split[0]);
-			g.drawString(line, 10 + indent, Display.HEIGHT - (font.getSize() * (display.size() - i)));
-		}
-	}
-
-	private void addLine(List<String> display, String line, int lineNum, int lineWidth) {
-		if (lineNum > 1) {
-			display.add(lineWidth + ":" + line);
-		}
-		else {
-			display.add("0:" + line);
-		}
+		return output;
 	}
 
 }
