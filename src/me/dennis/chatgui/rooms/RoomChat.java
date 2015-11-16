@@ -174,8 +174,12 @@ public class RoomChat extends Room {
 			int lineWidth = fm.stringWidth(words[0] + " ");
 			for (int j = 0; j < words.length; j++) {
 				String word = words[j];
-				if (fm.stringWidth(word) + 20 < Display.WIDTH) {
-					if (fm.stringWidth(line + word) + 20 < Display.WIDTH) {
+				int margin = 20;
+				if (lineNum > 1) {
+					margin += lineWidth;
+				}
+				if (fm.stringWidth(word) + margin < Display.WIDTH) {
+					if (fm.stringWidth(line + word) + margin < Display.WIDTH) {
 						line += word + " ";
 					}
 					else {
@@ -187,7 +191,7 @@ public class RoomChat extends Room {
 				}
 				else {
 					for (int h = 0; h < word.length(); h++) {
-						if (fm.stringWidth(line + word.charAt(h)) + 20 < Display.WIDTH) {
+						if (fm.stringWidth(line + word.charAt(h)) + margin < Display.WIDTH) {
 							line += word.charAt(h);
 						}
 						else {
