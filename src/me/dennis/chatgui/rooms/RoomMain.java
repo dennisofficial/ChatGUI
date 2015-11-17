@@ -204,7 +204,7 @@ public class RoomMain extends Room {
 
 		Font font = null;
 		try {
-			font = Font.createFont(Font.PLAIN, new File("fonts/main.ttf"));
+			font = Font.createFont(Font.PLAIN, new File("fonts/main.otf"));
 		} catch (FontFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

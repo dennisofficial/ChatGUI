@@ -146,7 +146,7 @@ public class RoomChat extends Room {
 
 		Font font = null;
 		try {
-			font = Font.createFont(Font.PLAIN, new File("fonts/main.ttf"));
+			font = Font.createFont(Font.PLAIN, new File("fonts/main.otf"));
 			
 		}
 		catch (FontFormatException e) {
@@ -155,13 +155,13 @@ public class RoomChat extends Room {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		font = font.deriveFont(20F);
+		font = font.deriveFont(23F);
 		g.setFont(font);
 		FontMetrics fm = g.getFontMetrics(font);
 
 		// Input Bar
 		List<String> input = new ArrayList<String>();
-		input.add(nickname + ": " + output + "_");
+		input.add(output + "_");
 		List<String> output = wrapList(input, fm);
 		g.setColor(new Color(0x000000));
 		g.fillRect(0, Display.HEIGHT - (font.getSize() * output.size()) + 2, Display.WIDTH, (font.getSize() * output.size()) - 2);
@@ -170,17 +170,20 @@ public class RoomChat extends Room {
 		for (h = 0; h < output.size(); h++) {
 			String[] split = output.get(h).split(":", 2);
 			String line = split[1];
-			int indent = new Integer(split[0]);
-			g.drawString(line, 10 + indent, Display.HEIGHT - (font.getSize() * (output.size() - h - 1)));
+			g.drawString(line, 10, Display.HEIGHT - (font.getSize() * (output.size() - h - 1)));
 		}
 		
 		// Message Display
+		int inputSize = font.getSize();
+		font = font.deriveFont(20F);
+		g.setFont(font);
+		fm = g.getFontMetrics(font);
 		List<String> display = wrapList(log, fm);
 		for (int i = 0; i < display.size(); i++) {
 			String[] split = display.get(i).split(":", 2);
 			String line = split[1];
 			int indent = new Integer(split[0]);
-			g.drawString(line, 10 + indent, Display.HEIGHT - (font.getSize() * (display.size() - i + h - 1)));
+			g.drawString(line, 10 + indent, Display.HEIGHT - (inputSize * (display.size() - i + h - 1)));
 		}
 	}
 
