@@ -1,12 +1,21 @@
 package me.dennis.chatgui.rooms;
 
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
+import static java.awt.event.KeyEvent.VK_DECIMAL;
+import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.VK_NUMPAD0;
+import static java.awt.event.KeyEvent.VK_NUMPAD9;
+import static java.awt.event.KeyEvent.VK_PERIOD;
+import static java.awt.event.KeyEvent.VK_SHIFT;
+import static java.awt.event.KeyEvent.getExtendedKeyCodeForChar;
+import static java.awt.event.KeyEvent.getKeyText;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import static java.awt.event.KeyEvent.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,7 +27,6 @@ import me.dennis.chatgui.listeners.Keyboard;
 import me.dennis.chatgui.managers.NetworkManager;
 import me.dennis.chatgui.managers.RoomManager;
 import me.dennis.chatgui.protocols.ActionProtocol;
-import me.dennis.chatgui.protocols.MessageProtocol;
 import me.dennis.chatgui.types.Action;
 import me.dennis.chatgui.types.Room;
 
@@ -138,8 +146,8 @@ public class RoomMain extends Room {
 			deniedToNickname();
 		}
 		else if (state.equals(State.ACCEPT)) {
+			NetworkManager.sendMessage(ActionProtocol.generateString(nickname, Action.JOINED, null));
 			RoomManager.setRoom(RoomEnum.CHAT);
-			NetworkManager.sendMessage("joined");
 		}
 	}
 
@@ -206,7 +214,7 @@ public class RoomMain extends Room {
 
 		Font font = null;
 		try {
-			font = Font.createFont(Font.PLAIN, new File("fonts/main.otf"));
+			font = Font.createFont(Font.PLAIN, new File("fonts/main.ttf"));
 		} catch (FontFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -120,7 +120,7 @@ public class RoomChat extends Room {
 		}
 		else if (Keyboard.isPressed(VK_ENTER)) {
 			if (output.length() > 0) {
-				NetworkManager.sendMessage(output);
+				NetworkManager.sendMessage(MessageProtocol.generate(nickname, output));
 				output = "";
 			}
 		}
@@ -146,7 +146,7 @@ public class RoomChat extends Room {
 
 		Font font = null;
 		try {
-			font = Font.createFont(Font.PLAIN, new File("fonts/main.otf"));
+			font = Font.createFont(Font.PLAIN, new File("fonts/main.ttf"));
 			
 		}
 		catch (FontFormatException e) {

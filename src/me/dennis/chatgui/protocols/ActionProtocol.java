@@ -14,7 +14,7 @@ public class ActionProtocol extends Protocol {
 		String[] vals = data.split("\t", 3);
 		from = vals[0];
 		action = Action.parseString(vals[1]);
-		data = vals[2];
+		ActionProtocol.data = vals[2];
 	}
 	
 	public static boolean receivedData() {
@@ -36,8 +36,14 @@ public class ActionProtocol extends Protocol {
 		return data;
 	}
 	
+	public static void reset() {
+		from = null;
+		action = null;
+		data = null;
+	}
+	
 	public static String generateString(String from, Action action, String data) {
-		return from + "\t" + action.name() + "\t" + data;
+		return "action\t" + from + "\t" + action.name() + "\t" + data;
 	}
 
 }

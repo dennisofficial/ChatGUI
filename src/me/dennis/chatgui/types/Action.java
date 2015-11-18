@@ -4,7 +4,8 @@ public enum Action {
 
 	USERNAME_VERIFY,
 	USERNAME_DENY,
-	USERNAME_ACCEPT;
+	USERNAME_ACCEPT,
+	JOINED;
 	
 	public static Action parseString(String string) {
 		for (Action action : values()) {

@@ -11,6 +11,7 @@ import javax.swing.Timer;
 import me.dennis.chatgui.listeners.Keyboard;
 import me.dennis.chatgui.listeners.Mouse;
 import me.dennis.chatgui.managers.RoomManager;
+import me.dennis.chatgui.protocols.ActionProtocol;
 import me.dennis.chatgui.protocols.MessageProtocol;
 
 @SuppressWarnings("serial")
@@ -46,7 +47,9 @@ public class Display extends JPanel implements ActionListener {
 		
 		Keyboard.reset();
 		Mouse.reset();
+		
 		MessageProtocol.reset();
+		ActionProtocol.reset();
 	}
 	
 	@Override

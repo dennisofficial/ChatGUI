@@ -1,5 +1,6 @@
 package me.dennis.chatgui.managers;
 
+import me.dennis.chatgui.protocols.ActionProtocol;
 import me.dennis.chatgui.protocols.MessageProtocol;
 
 public abstract class Protocol {
@@ -21,7 +22,8 @@ public abstract class Protocol {
 	
 	enum Enum {
 		
-		MESSAGE("msg", new MessageProtocol());
+		MESSAGE("msg", new MessageProtocol()),
+		ACTION("action", new ActionProtocol());
 		
 		public String label;
 		public Protocol protocol;
