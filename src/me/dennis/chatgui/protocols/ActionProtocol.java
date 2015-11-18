@@ -17,7 +17,7 @@ public class ActionProtocol extends Protocol {
 		data = vals[2];
 	}
 	
-	public static boolean dataRecieved() {
+	public static boolean receivedData() {
 		if (from != null) {
 			return true;
 		}

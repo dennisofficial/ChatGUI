@@ -86,7 +86,7 @@ public class RoomChat extends Room {
 
 	@Override
 	public void update() {
-		if (MessageProtocol.recievedData()) {
+		if (MessageProtocol.receivedData()) {
 			String from = MessageProtocol.getFrom();
 			String message = MessageProtocol.getMessage();
 			log.add(from + ": " + message);

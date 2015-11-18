@@ -14,7 +14,7 @@ public class MessageProtocol extends Protocol {
 		message = vals[1];
 	}
 	
-	public static boolean recievedData() {
+	public static boolean receivedData() {
 		if (from != null) {
 			return true;
 		}

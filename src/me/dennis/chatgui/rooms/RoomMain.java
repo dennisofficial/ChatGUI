@@ -17,7 +17,9 @@ import me.dennis.chatgui.enums.RoomEnum;
 import me.dennis.chatgui.listeners.Keyboard;
 import me.dennis.chatgui.managers.NetworkManager;
 import me.dennis.chatgui.managers.RoomManager;
+import me.dennis.chatgui.protocols.ActionProtocol;
 import me.dennis.chatgui.protocols.MessageProtocol;
+import me.dennis.chatgui.types.Action;
 import me.dennis.chatgui.types.Room;
 
 public class RoomMain extends Room {
@@ -78,7 +80,7 @@ public class RoomMain extends Room {
 					nickname = nickname.substring(0, nickname.length() - 1);
 				}
 				if (Keyboard.isPressed(VK_ENTER)) {
-					NetworkManager.sendMessage(nickname);
+					NetworkManager.sendMessage(ActionProtocol.generateString(null, Action.USERNAME_VERIFY, nickname));
 					state = State.VERIFYING;
 				}
 			}
@@ -123,10 +125,10 @@ public class RoomMain extends Room {
 		}
 		else if (state.equals(State.VERIFYING)) {
 			if (!verifiedToAccept && !verifiedToDenied) {
-				if (MessageProtocol.recievedData()) {
-					if (MessageProtocol.getMessage().equals("username")) {
+				if (ActionProtocol.receivedData()) {
+					if (ActionProtocol.getAction().equals(Action.USERNAME_DENY)) {
 						verifyingToDenied();
-					} else if (MessageProtocol.getMessage().equals("accept")) {
+					} else if (ActionProtocol.getAction().equals(Action.USERNAME_ACCEPT)) {
 						verifyingToAccept();
 					}
 				}
