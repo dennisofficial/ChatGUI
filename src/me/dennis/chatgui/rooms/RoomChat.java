@@ -44,7 +44,9 @@ import java.util.Map.Entry;
 import me.dennis.chatgui.core.Display;
 import me.dennis.chatgui.listeners.Keyboard;
 import me.dennis.chatgui.managers.NetworkManager;
+import me.dennis.chatgui.protocols.ActionProtocol;
 import me.dennis.chatgui.protocols.MessageProtocol;
+import me.dennis.chatgui.types.Action;
 import me.dennis.chatgui.types.Room;
 
 public class RoomChat extends Room {
@@ -82,6 +84,7 @@ public class RoomChat extends Room {
 
 	@Override
 	public void init() {
+		NetworkManager.sendMessage(ActionProtocol.generateString(nickname, Action.JOINED, null));
 	}
 
 	@Override

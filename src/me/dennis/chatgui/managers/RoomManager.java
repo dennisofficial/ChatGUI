@@ -12,6 +12,7 @@ public class RoomManager {
 	
 	public static void setRoom(RoomEnum room) {
 		RoomManager.room = room.room;
+		room.room.init();
 	}
 
 	public static void init() {

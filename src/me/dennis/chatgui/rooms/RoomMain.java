@@ -146,7 +146,6 @@ public class RoomMain extends Room {
 			deniedToNickname();
 		}
 		else if (state.equals(State.ACCEPT)) {
-			NetworkManager.sendMessage(ActionProtocol.generateString(nickname, Action.JOINED, null));
 			RoomManager.setRoom(RoomEnum.CHAT);
 		}
 	}
