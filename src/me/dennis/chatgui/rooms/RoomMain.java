@@ -147,6 +147,7 @@ public class RoomMain extends Room {
 		}
 		else if (state.equals(State.ACCEPT)) {
 			RoomManager.setRoom(RoomEnum.CHAT);
+			state = State.DISCONNECTED;
 		}
 	}
 
@@ -250,10 +251,13 @@ public class RoomMain extends Room {
 		else if (state.equals(State.DENIED)) {
 			g.drawString("Username taken!", (Display.WIDTH - fm.stringWidth("Username taken!")) / 2, Display.HEIGHT / 2);
 		}
+		else if (state.equals(State.DISCONNECTED)) {
+			g.drawString("Disconnected!", (Display.WIDTH - fm.stringWidth("Disconnected!")) / 2, Display.HEIGHT / 2);
+		}
 	}
 
 	enum State {
-		CONNECTING, IP, NICKNAME, ERROR, VERIFYING, DENIED, ACCEPT;
+		CONNECTING, IP, NICKNAME, ERROR, VERIFYING, DENIED, ACCEPT, DISCONNECTED;
 	}
 
 }

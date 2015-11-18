@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
+import me.dennis.chatgui.enums.RoomEnum;
+
 public class NetworkManager implements Runnable {
 
 	public static Socket connection;
@@ -44,7 +46,13 @@ public class NetworkManager implements Runnable {
 			try {
 				Protocol.parsePacket(NetworkManager.input.readUTF());
 			} catch (SocketException e) {
-				System.err.println("Server Disconnected!");
+				RoomManager.setRoom(RoomEnum.MAIN);
+				try {
+					connection.close();
+					input.close();
+					output.close();
+				} catch (IOException e1) {}
+				break;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
