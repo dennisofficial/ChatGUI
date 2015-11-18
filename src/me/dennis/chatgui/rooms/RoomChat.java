@@ -139,7 +139,7 @@ public class RoomChat extends Room {
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(new Color(0x707070));
+		g.setColor(new Color(0xB0B0B0));
 		g.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -163,8 +163,8 @@ public class RoomChat extends Room {
 		List<String> input = new ArrayList<String>();
 		input.add(nickname + ": " + output + "_");
 		List<String> output = wrapList(input, fm);
-		g.setColor(new Color(0x000000));
-		g.fillRect(0, Display.HEIGHT - (font.getSize() * output.size()) + 2, Display.WIDTH, (font.getSize() * output.size()) - 2);
+		g.setColor(new Color(0x707070));
+		g.fillRoundRect(0, Display.HEIGHT - (font.getSize() * output.size()) + 2, Display.WIDTH, (font.getSize() * output.size()) - 2, 5, 5);
 		g.setColor(new Color(0xFFFFFF));
 		int h;
 		for (h = 0; h < output.size(); h++) {
