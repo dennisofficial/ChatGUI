@@ -167,7 +167,7 @@ public class RoomChat extends Room {
 		input.add(output + "_");
 		List<String> output = wrapList(input, fm);
 		g.setColor(new Color(0x707070));
-		g.fillRoundRect(0, Display.HEIGHT - (font.getSize() * output.size()) + 2, Display.WIDTH, (font.getSize() * output.size()) - 2, 5, 5);
+		g.fillRoundRect(0, Display.HEIGHT - (font.getSize() * output.size()) + 2, Display.WIDTH, (font.getSize() * output.size()) + Display.HEIGHT, 10, 10);
 		g.setColor(new Color(0xFFFFFF));
 		int h;
 		for (h = 0; h < output.size(); h++) {
